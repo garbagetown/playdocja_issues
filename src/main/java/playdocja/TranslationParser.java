@@ -13,6 +13,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * @author garbagetown
+ *
+ */
 public class TranslationParser {
 
     private static Logger logger = Logger.getLogger(TranslationParser.class);
@@ -30,6 +35,10 @@ public class TranslationParser {
     private List<String> ja;
     private Status status;
 
+    /**
+     * 
+     * @param path
+     */
     public TranslationParser(Path path) {
         this.path = path;
         this.pairs = new ArrayList<>();
@@ -42,11 +51,17 @@ public class TranslationParser {
      * 
      * @param path
      * @return
-     * @throws IOException
      */
-    public List<Pair<List<String>, List<String>>> parse() throws IOException {
+    public List<Pair<List<String>, List<String>>> parse() {
 
-        for (String line : Files.readAllLines(path)) {
+        List<String> lines = null;
+        try {
+            lines = Files.readAllLines(path);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        
+        for (String line : lines) {
             
             String s = line.trim();
 
@@ -135,6 +150,9 @@ public class TranslationParser {
         }
     }
 
+    /**
+     * 
+     */
     private void addToPairs() {
         
         if (isEmpty(en) && isEmpty(ja)) {

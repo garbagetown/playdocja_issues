@@ -25,22 +25,19 @@ public class TranslationParserTest {
 
     @Test
     public void parseRegularCase() throws Exception {
-        List<Pair<List<String>, List<String>>> pairs = 
-                new TranslationParser(Paths.get("src/test/resources/test1.md")).parse();
+        List<Pair<List<String>, List<String>>> pairs = parse("test1.md");
         assertThat(pairs.size(), is(4));
     }
 
     @Test
     public void parseHasTranslatedTag() throws Exception {
-        List<Pair<List<String>, List<String>>> pairs = 
-                new TranslationParser(Paths.get("src/test/resources/test2.md")).parse();
+        List<Pair<List<String>, List<String>>> pairs = parse("test2.md");
         assertThat(pairs.size(), is(5));
     }
     
     @Test
     public void parseHasInlineComment() throws Exception {
-        List<Pair<List<String>, List<String>>> pairs = 
-                new TranslationParser(Paths.get("src/test/resources/test3.md")).parse();
+        List<Pair<List<String>, List<String>>> pairs = parse("test3.md");
         assertThat(pairs.size(), is(6));
         assertThat(pairs.get(5).getLeft().size(), is(7));
         assertThat(pairs.get(5).getRight().size(), is(7));
@@ -48,8 +45,11 @@ public class TranslationParserTest {
     
     @Test
     public void parseHasSourceCode() throws Exception {
-        List<Pair<List<String>, List<String>>> pairs = 
-                new TranslationParser(Paths.get("src/test/resources/test4.md")).parse();
+        List<Pair<List<String>, List<String>>> pairs = parse("test4.md");
         assertThat(pairs.size(), is(9));
+    }
+    
+    private List<Pair<List<String>, List<String>>> parse(String file) {
+        return new TranslationParser(Paths.get("src/test/resources/parse", file)).parse();
     }
 }
