@@ -1,7 +1,4 @@
-import org.apache.log4j.Logger;
-import org.kohsuke.github.GHIssueBuilder;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
+package playdocja;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,9 +8,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Main {
+import org.apache.log4j.Logger;
+import org.kohsuke.github.GHIssueBuilder;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
 
-    private static Logger logger = Logger.getLogger(Main.class.getName());
+public class IssueRegister {
+
+    private static Logger logger = Logger.getLogger(IssueRegister.class.getName());
     private static String baseurl = "https://github.com/garbagetown/playdocja/blob/2.2.0/documentation";
 
     public static void main(String[] args) throws IOException {
@@ -77,6 +79,24 @@ public class Main {
         }
     }
 
+    /**
+     * 
+     * @param login
+     * @param password
+     * @param organization
+     * @param repository
+     * @return
+     */
+    public GHRepository getRepository(String login, String password, String organization, String repository) {
+        try {
+            GitHub g = GitHub.connectUsingPassword(login, password);
+            GHRepository r = g.getRepository(organization + "/" + repository);
+            return r;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private static Issue toDeleteIssue(String oldver, String path) throws IOException {
         logger.debug(String.format("[%-7s] %s/%s", "DELETED", oldver, path));
         return null;
