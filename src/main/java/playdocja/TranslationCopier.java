@@ -77,6 +77,9 @@ public class TranslationCopier {
         if (!from.getName().endsWith(MARKDOWN_EXT)) {
             return;
         }
+        if (!to.exists()) {
+            return;
+        }
         
         Path f = from.toPath();
         Path t = to.toPath();
