@@ -23,6 +23,8 @@ public class TranslationCopier {
     
     private static Logger logger = Logger.getLogger(TranslationCopier.class);
 
+    public static final String MARKDOWN_EXT = ".md";
+    
     /**
      * 
      * @param from
@@ -72,6 +74,10 @@ public class TranslationCopier {
      */
     private void processFile(File from, File to) {
 
+        if (!from.getName().endsWith(MARKDOWN_EXT)) {
+            return;
+        }
+        
         Path f = from.toPath();
         Path t = to.toPath();
         
