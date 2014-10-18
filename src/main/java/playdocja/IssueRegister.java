@@ -3,6 +3,7 @@ package playdocja;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,6 +18,35 @@ public class IssueRegister {
 
     private static Logger logger = Logger.getLogger(IssueRegister.class.getName());
     private static String baseurl = "https://github.com/garbagetown/playdocja/blob/2.2.0/documentation";
+
+    /**
+     * 
+     * @param basepath
+     * @param olddir
+     * @param newdir
+     * @return
+     */
+    public List<Issue> getDiffsAsIssues(Path basepath, String olddir, String newdir) {
+        
+        Path oldpath = basepath.resolve(olddir).toAbsolutePath();
+        Path newpath = basepath.resolve(newdir).toAbsolutePath();
+        
+        String command = String.format("diff -qr %s %s", oldpath, newpath);
+        logger.debug(command);
+
+        List<String> results = null;
+        try {
+            results = exec(command);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        
+        List<Issue> issues = new ArrayList<Issue>();
+        for (String result : results) {
+            logger.debug(result);
+        }
+        return issues;
+    }
 
     public static void main(String[] args) throws IOException {
 
