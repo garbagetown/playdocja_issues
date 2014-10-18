@@ -1,6 +1,7 @@
 package playdocja;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
@@ -19,7 +20,10 @@ public class IssueRegister {
     private static Logger logger = Logger.getLogger(IssueRegister.class.getName());
     private static String baseurl = "https://github.com/garbagetown/playdocja/blob/2.2.0/documentation";
 
+    public static final String MARKDOWN_EXT = ".md";
+    
     public static final String LABEL_UPDATE = "update";
+    public static final String LABEL_NEW = "new";
 
     /**
      * 
@@ -49,7 +53,14 @@ public class IssueRegister {
                 issues.add(toUpdate(oldpath, newpath, path));
                 continue;
             }
-
+            
+            p = Pattern.compile(String.format("^Only in %s/(.+)", newpath));
+            m = p.matcher(result.replace(": ", "/"));
+            if (m.find()) {
+                String path = m.group(1);
+                issues.addAll(toNew(newpath, path));
+                continue;
+            }
         }
         return issues;
     }
@@ -80,7 +91,45 @@ public class IssueRegister {
 
         return new Issue(LABEL_UPDATE, path, body.toString());
     }
+    
+    /**
+     * 
+     * @param newpath
+     * @param path
+     * @return
+     */
+    private List<Issue> toNew(Path newpath, String path) {
+        logger.debug(String.format("[%-6s] %s/%s", LABEL_NEW, newpath, path));
 
+        List<File> files = findFiles(newpath.resolve(path).toFile());
+        List<Issue> issues = new ArrayList<>();
+        for (File file : files) {
+            path = newpath.relativize(file.toPath()).toString();
+            String body = String.format("- %s/%s", baseurl, path);
+            issues.add(new Issue(LABEL_NEW, path, body));
+        }
+        return issues;
+    }
+    
+    /**
+     * 
+     * @param file
+     * @return
+     */
+    private List<File> findFiles(File file) {
+        List<File> files = new ArrayList<>();
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                files.addAll(findFiles(f));
+            }
+        } else {
+            if (file.getName().endsWith(MARKDOWN_EXT)) {
+                files.add(file);
+            }
+        }
+        return files;
+    }
+    
     /**
      * 
      * @param command

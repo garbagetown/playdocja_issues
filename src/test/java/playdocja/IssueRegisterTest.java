@@ -44,6 +44,28 @@ public class IssueRegisterTest {
         assertIssue(issues, 1, IssueRegister.LABEL_UPDATE, "about/Philosophy.md");
     }
     
+    @Test
+    public void hasNewFile() {
+        List<Issue> issues = getDiffsAsIssues("test3");
+        assertThat(issues.size(), is(4));
+        assertIssue(issues, 0, IssueRegister.LABEL_NEW, "Highlights23.md");
+        assertIssue(issues, 1, IssueRegister.LABEL_UPDATE, "Home.md");
+        assertIssue(issues, 2, IssueRegister.LABEL_UPDATE, "about/Philosophy.md");
+        assertIssue(issues, 3, IssueRegister.LABEL_NEW, "about/PlayUserGroups.md");
+    }
+    
+    @Test
+    public void hasNewDir() {
+        List<Issue> issues = getDiffsAsIssues("test4");
+        assertThat(issues.size(), is(6));
+        assertIssue(issues, 0, IssueRegister.LABEL_NEW, "Highlights23.md");
+        assertIssue(issues, 1, IssueRegister.LABEL_UPDATE, "Home.md");
+        assertIssue(issues, 2, IssueRegister.LABEL_UPDATE, "about/Philosophy.md");
+        assertIssue(issues, 3, IssueRegister.LABEL_NEW, "about/PlayUserGroups.md");
+        assertIssue(issues, 4, IssueRegister.LABEL_NEW, "scalaGuide/_Sidebar.md");
+        assertIssue(issues, 5, IssueRegister.LABEL_NEW, "scalaGuide/ScalaHome.md");
+    }
+    
     /**
      * 
      * @param issues
