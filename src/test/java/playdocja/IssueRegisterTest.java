@@ -36,6 +36,26 @@ public class IssueRegisterTest {
         assertThat(issues.size(), is(0));
     }
 
+    @Test
+    public void hasDiffs() {
+        List<Issue> issues = getDiffsAsIssues("test2");
+        assertThat(issues.size(), is(2));
+        assertIssue(issues, 0, IssueRegister.LABEL_UPDATE, "Home.md");
+        assertIssue(issues, 1, IssueRegister.LABEL_UPDATE, "about/Philosophy.md");
+    }
+    
+    /**
+     * 
+     * @param issues
+     * @param index
+     * @param label
+     * @param path
+     */
+    private void assertIssue(List<Issue> issues, int index, String label, String path) {
+        assertThat(issues.get(index).label, is(label));
+        assertThat(issues.get(index).path, is(path));
+    }
+    
     /**
      * 
      * @param dir

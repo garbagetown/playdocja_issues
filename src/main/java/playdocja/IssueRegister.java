@@ -19,6 +19,8 @@ public class IssueRegister {
     private static Logger logger = Logger.getLogger(IssueRegister.class.getName());
     private static String baseurl = "https://github.com/garbagetown/playdocja/blob/2.2.0/documentation";
 
+    public static final String LABEL_UPDATE = "update";
+
     /**
      * 
      * @param basepath
@@ -27,27 +29,79 @@ public class IssueRegister {
      * @return
      */
     public List<Issue> getDiffsAsIssues(Path basepath, String olddir, String newdir) {
-        
+
         Path oldpath = basepath.resolve(olddir).toAbsolutePath();
         Path newpath = basepath.resolve(newdir).toAbsolutePath();
-        
+
         String command = String.format("diff -qr %s %s", oldpath, newpath);
         logger.debug(command);
 
-        List<String> results = null;
-        try {
-            results = exec(command);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        
+        List<String> results = execute(command);
+
         List<Issue> issues = new ArrayList<Issue>();
         for (String result : results) {
             logger.debug(result);
+
+            Pattern p = Pattern.compile(String.format("^Files %s/(.+) and %s/(.+) differ$", oldpath, newpath));
+            Matcher m = p.matcher(result);
+            if (m.find()) {
+                String path = m.group(1);
+                issues.add(toUpdate(oldpath, newpath, path));
+                continue;
+            }
+
         }
         return issues;
     }
+    
+    /**
+     * 
+     * @param oldpath
+     * @param newpath
+     * @param path
+     * @return
+     */
+    private Issue toUpdate(Path oldpath, Path newpath, String path) {
+        logger.debug(String.format("[%-6s] %s/%s", LABEL_UPDATE, newpath, path));
 
+        String command = String.format("diff -u %s/%s /%s/%s", oldpath, path, newpath, path);
+        
+        List<String> results = execute(command);
+
+        StringBuilder body = new StringBuilder();
+        body.append(String.format("- %s/%s\n", baseurl, path));
+        body.append("```\n");
+        for (String result : results) {
+            result = result.replace("```", "'''");
+            body.append(result);
+            body.append("\n");
+        }
+        body.append("\n```");
+
+        return new Issue(LABEL_UPDATE, path, body.toString());
+    }
+
+    /**
+     * 
+     * @param command
+     * @return
+     */
+    private List<String> execute(String command) {
+        List<String> lines = new ArrayList<String>();
+        try {
+            Process p = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return lines;
+    }
+    
     public static void main(String[] args) throws IOException {
 
         String basepath = args[0];
@@ -126,7 +180,7 @@ public class IssueRegister {
             throw new RuntimeException(e);
         }
     }
-    
+
     private static Issue toDeleteIssue(String oldver, String path) throws IOException {
         logger.debug(String.format("[%-7s] %s/%s", "DELETED", oldver, path));
         return null;
