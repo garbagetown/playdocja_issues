@@ -50,7 +50,9 @@ public class IssueRegister {
             Matcher m = p.matcher(result);
             if (m.find()) {
                 String path = m.group(1);
-                issues.add(toUpdate(oldpath, newpath, path));
+                if (path.endsWith(MARKDOWN_EXT)) {
+                    issues.add(toUpdate(oldpath, newpath, path));
+                }
                 continue;
             }
             

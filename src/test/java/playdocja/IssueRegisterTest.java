@@ -66,6 +66,12 @@ public class IssueRegisterTest {
         assertIssue(issues, 5, IssueRegister.LABEL_NEW, "scalaGuide/ScalaHome.md");
     }
     
+    @Test
+    public void ignoreImagesAndCodes() {
+        List<Issue> issues = getDiffsAsIssues("test5");
+        assertThat(issues.size(), is(1));
+    }
+    
     /**
      * 
      * @param issues
