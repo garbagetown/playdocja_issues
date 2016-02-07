@@ -207,8 +207,9 @@ public class IssueRegister {
      * @param issues
      * @throws IOException 
      * @throws NumberFormatException 
+     * @throws InterruptedException 
      */
-    public void registerIssues(List<Issue> issues) throws NumberFormatException, IOException {
+    public void registerIssues(List<Issue> issues) throws NumberFormatException, IOException, InterruptedException {
         
         GHRepository repository = getRepository();
         
@@ -229,12 +230,13 @@ public class IssueRegister {
         GHMilestone milestone = repository.getMilestone(n);
         
         for (Issue issue : issues) {
+            logger.debug(String.format("create %s issue: %s", issue.label, issue.path));
             GHIssueBuilder builder = repository.createIssue(issue.path);
             builder.milestone(milestone);
             builder.label(issue.label);
             builder.body(issue.body);
             builder.create();
-            logger.debug(String.format("create %s issue: %s", issue.label, issue.path));
+            Thread.sleep(60_000);
         }
     }
     
@@ -242,8 +244,10 @@ public class IssueRegister {
      * 
      * @param args
      * @throws IOException
+     * @throws InterruptedException 
+     * @throws NumberFormatException 
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NumberFormatException, InterruptedException {
 
         Path basepath = Paths.get(args[0]);
         String olddir = args[1];
