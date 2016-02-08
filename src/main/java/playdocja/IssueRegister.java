@@ -26,7 +26,7 @@ public class IssueRegister {
     private static Logger logger = Logger.getLogger(IssueRegister.class.getName());
 
     public static final String MARKDOWN_EXT = ".md";
-    
+
     public static final String LABEL_UPDATE = "update";
     public static final String LABEL_NEW = "new";
 
@@ -34,9 +34,9 @@ public class IssueRegister {
     private Path oldpath;
     private Path newpath;
     private Properties prop;
-    
+
     /**
-     * 
+     *
      * @param basepath
      * @param olddir
      * @param newdir
@@ -53,9 +53,9 @@ public class IssueRegister {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
-     * 
+     *
      * @return
      */
     public List<Issue> getDiffsAsIssues() {
@@ -78,7 +78,7 @@ public class IssueRegister {
                 }
                 continue;
             }
-            
+
             p = Pattern.compile(String.format("^Only in %s/(.+)", newpath));
             m = p.matcher(result.replace(": ", "/"));
             if (m.find()) {
@@ -89,9 +89,9 @@ public class IssueRegister {
         }
         return issues;
     }
-    
+
     /**
-     * 
+     *
      * @param path
      * @return
      */
@@ -103,12 +103,12 @@ public class IssueRegister {
         String newdir = basepath.toAbsolutePath().relativize(newpath).toString();
         String oldtitle = olddir + "/" + path;
         String newtitle = newdir + "/" + path;
-        
+
         StringBuilder body = new StringBuilder();
         body.append(String.format("- %s/%s\n", baseurl, newtitle));
         body.append(String.format("- diffs between [%s](%s/%s) ", oldtitle, baseurl, oldtitle));
         body.append(String.format("and [%s](%s/%s).\n", newtitle, baseurl, newtitle));
-        
+
         String command = String.format("diff -u %s/%s /%s/%s", oldpath, path, newpath, path);
         List<String> results = execute(command);
 
@@ -122,9 +122,9 @@ public class IssueRegister {
 
         return new Issue(LABEL_UPDATE, path, body.toString());
     }
-    
+
     /**
-     * 
+     *
      * @param path
      * @return
      */
@@ -143,9 +143,9 @@ public class IssueRegister {
         }
         return issues;
     }
-    
+
     /**
-     * 
+     *
      * @param file
      * @return
      */
@@ -162,9 +162,9 @@ public class IssueRegister {
         }
         return files;
     }
-    
+
     /**
-     * 
+     *
      * @param command
      * @return
      */
@@ -185,7 +185,7 @@ public class IssueRegister {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public GHRepository getRepository() {
@@ -203,19 +203,19 @@ public class IssueRegister {
     }
 
     /**
-     * 
+     *
      * @param issues
-     * @throws IOException 
-     * @throws NumberFormatException 
-     * @throws InterruptedException 
+     * @throws IOException
+     * @throws NumberFormatException
+     * @throws InterruptedException
      */
     public void registerIssues(List<Issue> issues) throws NumberFormatException, IOException, InterruptedException {
-        
+
         GHRepository repository = getRepository();
-        
+
         String s = prop.getProperty("milestone");
         int n = -1;
-        
+
         Iterator<GHMilestone> it = repository.listMilestones(GHIssueState.OPEN).iterator();
         while (it.hasNext()) {
             GHMilestone m = it.next();
@@ -228,7 +228,7 @@ public class IssueRegister {
             throw new RuntimeException();
         }
         GHMilestone milestone = repository.getMilestone(n);
-        
+
         for (Issue issue : issues) {
             logger.debug(String.format("create %s issue: %s", issue.label, issue.path));
             GHIssueBuilder builder = repository.createIssue(issue.path);
@@ -236,30 +236,73 @@ public class IssueRegister {
             builder.label(issue.label);
             builder.body(issue.body);
             builder.create();
-            Thread.sleep(60_000);
+            Thread.sleep(1_000);
         }
     }
-    
+
     /**
-     * 
+     *
      * @param args
      * @throws IOException
-     * @throws InterruptedException 
-     * @throws NumberFormatException 
+     * @throws InterruptedException
+     * @throws NumberFormatException
      */
     public static void main(String[] args) throws IOException, NumberFormatException, InterruptedException {
 
         Path basepath = Paths.get(args[0]);
         String olddir = args[1];
         String newdir = args[2];
-        
+
         IssueRegister register = new IssueRegister(basepath, olddir, newdir);
-        
+
         List<Issue> issues = register.getDiffsAsIssues();
+
+        List<String> list = new ArrayList<String>();
+        list.add("manual/detailedTopics/configuration/ws/LooseSSL.md");
+        list.add("manual/detailedTopics/configuration/ws/KeyStores.md");
+        list.add("manual/detailedTopics/configuration/ws/HostnameVerification.md");
+        list.add("manual/detailedTopics/configuration/ws/ExampleSSLConfig.md");
+        list.add("manual/detailedTopics/configuration/ws/DefaultContext.md");
+        list.add("manual/detailedTopics/configuration/ws/DebuggingSSL.md");
+        list.add("manual/detailedTopics/configuration/ws/CipherSuites.md");
+        list.add("manual/detailedTopics/configuration/ws/CertificateValidation.md");
+        list.add("manual/detailedTopics/configuration/ws/CertificateRevocation.md");
+        list.add("manual/detailedTopics/configuration/ws/CertificateGeneration.md");
+        list.add("manual/detailedTopics/configuration/filters/SecurityHeaders.md");
+        list.add("manual/detailedTopics/configuration/filters/GzipEncoding.md");
+        list.add("manual/detailedTopics/configuration/filters/CorsFilter.md");
+        list.add("manual/detailedTopics/configuration/ThreadPools.md");
+        list.add("manual/detailedTopics/configuration/SettingsLogger.md");
+        list.add("manual/detailedTopics/configuration/SettingsJDBC.md");
+        list.add("manual/detailedTopics/configuration/Configuration.md");
+        list.add("manual/detailedTopics/configuration/ApplicationSecret.md");
+        list.add("manual/detailedTopics/build/SBTSubProjects.md");
+        list.add("manual/detailedTopics/build/SBTSettings.md");
+        list.add("manual/detailedTopics/build/SBTDependencies.md");
+        list.add("manual/detailedTopics/build/SBTDebugging.md");
+        list.add("manual/detailedTopics/build/SBTCookbook.md");
+        list.add("manual/detailedTopics/build/PlayEnhancer.md");
+        list.add("manual/detailedTopics/build/CompilationSpeed.md");
+        list.add("manual/detailedTopics/build/Build.md");
+        list.add("manual/detailedTopics/build/AggregatingReverseRouters.md");
+        list.add("manual/detailedTopics/assets/RequireJS-support.md");
+        list.add("manual/detailedTopics/assets/AssetsLess.md");
+        list.add("manual/detailedTopics/assets/AssetsJSHint.md");
+        list.add("manual/detailedTopics/assets/AssetsCoffeeScript.md");
+        list.add("manual/detailedTopics/assets/Assets.md");
+        list.add("manual/about/PlayUserGroups.md");
+        list.add("manual/about/Philosophy.md");
+        list.add("manual/ModuleDirectory.md");
+        list.add("manual/Home.md");
+
         int u = 0;
         int n = 0;
         for (Issue issue : issues) {
             logger.info(String.format("[%-6s] %s", issue.label, issue.path));
+            if (list.contains(issue.label)) {
+                logger.info(String.format("%s is already created.", issue.label));
+                continue;
+            }
             switch (issue.label) {
             case LABEL_UPDATE:
                 u++;
