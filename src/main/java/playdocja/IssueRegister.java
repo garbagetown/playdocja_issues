@@ -257,52 +257,10 @@ public class IssueRegister {
 
         List<Issue> issues = register.getDiffsAsIssues();
 
-        List<String> list = new ArrayList<String>();
-        list.add("manual/detailedTopics/configuration/ws/LooseSSL.md");
-        list.add("manual/detailedTopics/configuration/ws/KeyStores.md");
-        list.add("manual/detailedTopics/configuration/ws/HostnameVerification.md");
-        list.add("manual/detailedTopics/configuration/ws/ExampleSSLConfig.md");
-        list.add("manual/detailedTopics/configuration/ws/DefaultContext.md");
-        list.add("manual/detailedTopics/configuration/ws/DebuggingSSL.md");
-        list.add("manual/detailedTopics/configuration/ws/CipherSuites.md");
-        list.add("manual/detailedTopics/configuration/ws/CertificateValidation.md");
-        list.add("manual/detailedTopics/configuration/ws/CertificateRevocation.md");
-        list.add("manual/detailedTopics/configuration/ws/CertificateGeneration.md");
-        list.add("manual/detailedTopics/configuration/filters/SecurityHeaders.md");
-        list.add("manual/detailedTopics/configuration/filters/GzipEncoding.md");
-        list.add("manual/detailedTopics/configuration/filters/CorsFilter.md");
-        list.add("manual/detailedTopics/configuration/ThreadPools.md");
-        list.add("manual/detailedTopics/configuration/SettingsLogger.md");
-        list.add("manual/detailedTopics/configuration/SettingsJDBC.md");
-        list.add("manual/detailedTopics/configuration/Configuration.md");
-        list.add("manual/detailedTopics/configuration/ApplicationSecret.md");
-        list.add("manual/detailedTopics/build/SBTSubProjects.md");
-        list.add("manual/detailedTopics/build/SBTSettings.md");
-        list.add("manual/detailedTopics/build/SBTDependencies.md");
-        list.add("manual/detailedTopics/build/SBTDebugging.md");
-        list.add("manual/detailedTopics/build/SBTCookbook.md");
-        list.add("manual/detailedTopics/build/PlayEnhancer.md");
-        list.add("manual/detailedTopics/build/CompilationSpeed.md");
-        list.add("manual/detailedTopics/build/Build.md");
-        list.add("manual/detailedTopics/build/AggregatingReverseRouters.md");
-        list.add("manual/detailedTopics/assets/RequireJS-support.md");
-        list.add("manual/detailedTopics/assets/AssetsLess.md");
-        list.add("manual/detailedTopics/assets/AssetsJSHint.md");
-        list.add("manual/detailedTopics/assets/AssetsCoffeeScript.md");
-        list.add("manual/detailedTopics/assets/Assets.md");
-        list.add("manual/about/PlayUserGroups.md");
-        list.add("manual/about/Philosophy.md");
-        list.add("manual/ModuleDirectory.md");
-        list.add("manual/Home.md");
-
         int u = 0;
         int n = 0;
         for (Issue issue : issues) {
             logger.info(String.format("[%-6s] %s", issue.label, issue.path));
-            if (list.contains(issue.label)) {
-                logger.info(String.format("%s is already created.", issue.label));
-                continue;
-            }
             switch (issue.label) {
             case LABEL_UPDATE:
                 u++;
