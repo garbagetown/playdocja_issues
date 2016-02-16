@@ -229,12 +229,7 @@ public class IssueRegister {
         }
         GHMilestone milestone = repository.getMilestone(n);
 
-        int count = 0;
         for (Issue issue : issues) {
-            count += 1;
-            if (count <= 72) {
-                continue;
-            }
             logger.debug(String.format("create %s issue: %s", issue.label, issue.path));
             GHIssueBuilder builder = repository.createIssue(issue.path);
             builder.milestone(milestone);
