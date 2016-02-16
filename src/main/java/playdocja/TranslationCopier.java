@@ -2,8 +2,10 @@ package playdocja;
 
 import static playdocja.TranslationParser.*;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,9 +122,13 @@ public class TranslationCopier {
      * 
      * @param args
      */
-    public static void main (String[] args) {
-        File from = Paths.get(args[0]).toFile();
-        File to = Paths.get(args[1]).toFile();
-        new TranslationCopier().copy(from, to);
+    public static void main (String[] args) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            System.out.print("enter the old path: ");
+            String o = reader.readLine().trim();
+            System.out.print("enter the new path: ");
+            String n = reader.readLine().trim();
+            new TranslationCopier().copy(Paths.get(o).toFile(), Paths.get(n).toFile());
+        }
     }
 }
